@@ -10,12 +10,12 @@ from applications.offers.choices.room_type import RoomType
 class Offer(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
-    location = models.ForeignKey('extra.Location', on_delete=models.PROTECT)
+    location = models.ForeignKey(Location, on_delete=models.PROTECT)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     rooms_count = models.PositiveSmallIntegerField()
     room_type = models.CharField(max_length=50, choices=RoomType.choices())
     is_active = models.BooleanField(default=True)
-    owner = models.ForeignKey('user.User', on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

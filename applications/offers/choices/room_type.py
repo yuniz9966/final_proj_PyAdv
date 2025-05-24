@@ -22,7 +22,16 @@ class RoomType(str, Enum):
 
     @classmethod
     def faker_choices(cls):
-        return [member.value for member in cls]
+        return [member.name for member in cls]
+
+    @classmethod
+    def get_varname_by_value(cls, value):
+        for member in cls:
+            if member.value == value:
+                return member.name
+
+
+
 
 
 

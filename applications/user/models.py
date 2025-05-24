@@ -1,12 +1,7 @@
-from django.contrib.auth.models import (
-    AbstractBaseUser,
-    BaseUserManager,
-    PermissionsMixin
-)
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-
 
 class UserManager(BaseUserManager):
     def create_user(self, username, email, password=None, **extra_fields):
@@ -28,8 +23,6 @@ class UserManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
         return self.create_user(username, email, password, **extra_fields)
-
-
 
 class User(AbstractBaseUser, PermissionsMixin):
     ROLE_CHOICES = [
@@ -56,12 +49,14 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ["email"]
 
     def __str__(self):
-        return f'{self.first_name[0]}. {self.last_name}'  \
-        if self.first_name and self.last_name else f'{self.username}'
+        return f'{self.first_name[0]}. {self.last_name}' if self.first_name and self.last_name else f'{self.username}'
 
     class Meta:
         db_table = "user"
-
+        indexes = [
+            models.Index(fields=['email']),
+            models.Index(fields=['role']),
+        ]
 
 def get_first_admin():
     admin = User.objects.filter(role="ADMIN").first()

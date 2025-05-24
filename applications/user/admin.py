@@ -24,6 +24,7 @@ class UserAdmin(BaseUserAdmin):
     )
     search_fields = ('username', 'email')
     ordering = ('username',)
+    list_per_page = 10
 
 
 
