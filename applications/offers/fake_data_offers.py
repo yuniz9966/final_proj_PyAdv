@@ -45,3 +45,28 @@ class RentHouseFactory(DjangoModelFactory):
     )
     is_active = True
     owner = factory.SubFactory(UserFactory)
+
+
+# import factory
+# from faker import Faker
+# from applications.offers.models import Offer
+# from applications.user.fake_data_user import UserFactory
+#
+# fake = Faker("de_DE")
+#
+# class RentHouseFactory(factory.django.DjangoModelFactory):
+#     class Meta:
+#         model = Offer
+#
+#     title = factory.LazyAttribute(lambda _: fake.sentence(nb_words=4))
+#     owner = factory.SubFactory(UserFactory, role='OWNER')
+#     # Другие поля (например, location)
+#
+#     @classmethod
+#     def _create(cls, model_class, *args, **kwargs):
+#         # Если owner не передан, используем существующий
+#         if 'owner' not in kwargs:
+#             from applications.user.models import User
+#             owners = User.objects.filter(role='OWNER')
+#             kwargs['owner'] = fake.random_element(owners) if owners.exists() else UserFactory(role='OWNER')
+#         return super()._create(model_class, *args, **kwargs)

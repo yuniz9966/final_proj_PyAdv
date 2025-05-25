@@ -1,10 +1,11 @@
+from datetime import date
 from rest_framework import serializers
 from applications.bookings.models import Booking, BookingStatus
 from applications.offers.models import Offer
 from applications.offers.serializers import OfferSerializer
 from applications.user.serializers import UserSerializer
 from django.utils.translation import gettext_lazy as _
-from datetime import date
+
 
 class BookingSerializer(serializers.ModelSerializer):
     offer = OfferSerializer(read_only=True)

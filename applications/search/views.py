@@ -53,7 +53,7 @@ class SearchListView(generics.ListAPIView):
         serializer = self.get_serializer(queryset, many=True)
         query = request.query_params.get('q')
         city = request.query_params.get('location__city')
-        district = request.query_params.get('district')
+        district = request.query_params.get('location__district')
         min_price = request.query_params.get('price__gte')
         max_price = request.query_params.get('price__lte')
         rooms_count = request.query_params.get('rooms_count')

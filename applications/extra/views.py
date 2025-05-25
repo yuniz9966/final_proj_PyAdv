@@ -20,3 +20,9 @@ class ReviewListCreateView(generics.ListCreateAPIView):
         if not self.request.user.is_authenticated or self.request.user.role != 'RENTER':
             raise ValidationError(_("Только арендаторы могут создавать отзывы."))
         serializer.save(author=self.request.user)
+
+
+class ReviewDetailView(generics.RetrieveAPIView):
+    queryset = Review.objects.all().select_related('offer', 'author')
+    serializer_class = ReviewSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]

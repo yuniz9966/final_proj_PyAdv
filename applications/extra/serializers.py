@@ -21,10 +21,29 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         request = self.context['request']
-        if request.user.role != 'RENTER':
-            raise serializers.ValidationError(
-                _("Только арендаторы могут оставлять отзывы.")
-            )
+        user = request.user
+        offer = data.get('offer')
+        rating = data.get('rating')
+
+        if user.role != 'RENTER':
+            raise serializers.ValidationError(_("Только арендаторы могут оставлять отзывы."))
+
+        if rating is not None and (rating < 1 or rating > 5):
+            raise serializers.ValidationError(_("Рейтинг должен быть от 1 до 5."))
+
+        # Проверка наличия подтверждённого бронирования
+        from applications.bookings.models import Booking, BookingStatus
+        if not Booking.objects.filter(
+            renter=user,
+            offer=offer,
+            status=BookingStatus.CONFIRMED
+        ).exists():
+            raise serializers.ValidationError(_("Вы можете оставить отзыв только для забронированного жилья."))
+
+        # Один отзыв на одно жилье
+        if Review.objects.filter(offer=offer, author=user).exists():
+            raise serializers.ValidationError(_("Вы уже оставили отзыв для этого предложения."))
+
         return data
 
     def create(self, validated_data):

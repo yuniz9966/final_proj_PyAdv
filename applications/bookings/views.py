@@ -21,8 +21,10 @@ class IsOfferOwner(BasePermission):
         return (
             request.user.is_authenticated and
             request.user.role == 'OWNER' and
+            obj.offer and
             obj.offer.owner == request.user
         )
+
 
 class BookingListCreateView(generics.ListCreateAPIView):
     queryset = Booking.objects.all().select_related('offer__location', 'renter', 'offer__owner')
@@ -76,6 +78,7 @@ class BookingCancelView(APIView):
             status=status.HTTP_200_OK
         )
 
+
 class BookingStatusView(generics.GenericAPIView):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
@@ -84,10 +87,12 @@ class BookingStatusView(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         booking = self.get_object()
         action = request.data.get('action')
+
         if booking.status != BookingStatus.PENDING:
             raise serializers.ValidationError(
                 _("Только бронирования в статусе 'Ожидает' можно подтвердить или отклонить.")
             )
+
         if action == 'confirm':
             booking.status = BookingStatus.CONFIRMED
             message = _("Бронирование подтверждено.")
@@ -96,7 +101,9 @@ class BookingStatusView(generics.GenericAPIView):
             message = _("Бронирование отклонено.")
         else:
             raise serializers.ValidationError(_("Укажите действие: 'confirm' или 'reject'."))
+
         booking.save()
+
         return Response({
             'status': 'success',
             'message': message,

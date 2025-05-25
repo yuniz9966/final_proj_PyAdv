@@ -1,4 +1,3 @@
-# applications/search/admin.py
 from django.contrib import admin
 from .models import SearchQuery
 import json
@@ -7,7 +6,7 @@ import json
 @admin.register(SearchQuery)
 class SearchQueryAdmin(admin.ModelAdmin):
     list_display = ('query', 'user', 'created_at', 'filters_display')
-    list_filter = ('user', 'created_at')
+    list_filter = (['created_at'])
     search_fields = ('query', 'user__username')
     date_hierarchy = 'created_at'
     readonly_fields = ('created_at', 'filters_display')

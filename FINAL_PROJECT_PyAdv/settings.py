@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     # 3-rd party
     'rest_framework',
     'django_filters',
+    'drf_yasg',
+    'rest_framework_simplejwt.token_blacklist',
 
     #local
     'applications.extra.apps.ExtraConfig',

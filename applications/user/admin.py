@@ -8,8 +8,8 @@ from applications.user.models import User
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
     model = User
-    list_display = ('username', 'email', 'first_name', 'last_name', 'role', 'is_staff')
-    list_filter = ('role', 'is_staff', 'is_superuser')
+    list_display = ('username', 'email', 'first_name', 'last_name', 'date_joined', 'role', 'is_staff')
+    list_filter = ('role', 'is_staff', 'is_superuser', 'date_joined')
     fieldsets = (
         (None, {'fields': ('username', 'email', 'password')}),
         ('Personal info', {'fields': ('first_name', 'last_name', 'birth_day', 'phone')}),

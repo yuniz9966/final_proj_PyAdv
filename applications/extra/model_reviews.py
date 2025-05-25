@@ -34,20 +34,6 @@ class Review(models.Model):
         verbose_name=_('Обновлено')
     )
 
-    def clean(self):
-        if self.rating < 1 or self.rating > 5:
-            raise ValidationError(_('Рейтинг должен быть от 1 до 5.'))
-        # Проверка, что автор имеет подтверждённое бронирование
-        if not Booking.objects.filter(
-            renter=self.author,
-            offer=self.offer,
-            status=BookingStatus.CONFIRMED
-        ).exists():
-            raise ValidationError(_('Вы можете оставить отзыв только для забронированного жилья.'))
-        # Проверка, что пользователь не оставлял отзыв для этого предложения
-        if Review.objects.filter(offer=self.offer, author=self.author).exclude(id=self.id).exists():
-            raise ValidationError(_('Вы уже оставили отзыв для этого предложения.'))
-
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)
