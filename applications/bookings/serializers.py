@@ -5,6 +5,9 @@ from applications.offers.models import Offer
 from applications.offers.serializers import OfferSerializer
 from applications.user.serializers import UserSerializer
 from django.utils.translation import gettext_lazy as _
+from rest_framework.exceptions import ValidationError
+from django.core.exceptions import ValidationError as DjangoValidationError
+from rest_framework.exceptions import ValidationError as DRFValidationError
 
 
 class BookingSerializer(serializers.ModelSerializer):
@@ -26,22 +29,40 @@ class BookingSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         renter = self.context['request'].user
-        if renter.role != 'RENTER':
-            raise serializers.ValidationError(
-                _("Только арендаторы могут создавать бронирования.")
-            )
+        offer = data.get('offer')
         start_date = data.get('start_date')
         end_date = data.get('end_date')
+
+        if renter.role != 'RENTER':
+            raise ValidationError(
+                _("Только арендаторы могут создавать бронирования.")
+            )
+
         if start_date and start_date < date.today():
-            raise serializers.ValidationError(
+            raise ValidationError(
                 _("Дата начала должна быть в будущем.")
             )
+
         if end_date and start_date and end_date <= start_date:
-            raise serializers.ValidationError(
+            raise ValidationError(
                 _("Дата окончания должна быть позже даты начала.")
             )
+
+        if Booking.objects.filter(
+                renter=renter,
+                offer=offer,
+                start_date=start_date,
+                end_date=end_date
+        ).exclude(status=BookingStatus.CANCELLED).exists():
+            raise ValidationError(
+                _("Вы уже создали бронирование на эти даты для этого предложения.")
+            )
+
         return data
 
     def create(self, validated_data):
         validated_data['renter'] = self.context['request'].user
-        return super().create(validated_data)
+        try:
+            return super().create(validated_data)
+        except DjangoValidationError as e:
+            raise DRFValidationError(e.message_dict)

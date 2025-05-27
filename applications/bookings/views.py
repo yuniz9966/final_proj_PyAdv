@@ -1,8 +1,9 @@
-from rest_framework import generics, filters, serializers
+from rest_framework import generics, filters
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, BasePermission
 from django_filters.rest_framework import DjangoFilterBackend
 from django.utils.translation import gettext_lazy as _
+from rest_framework.exceptions import ValidationError
 from applications.bookings.models import Booking, BookingStatus
 from applications.bookings.serializers import BookingSerializer
 from rest_framework.views import APIView
@@ -46,7 +47,7 @@ class BookingListCreateView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         if not self.request.user.is_authenticated or self.request.user.role != 'RENTER':
-            raise serializers.ValidationError(
+            raise ValidationError(
                 _("Только арендаторы могут создавать бронирования.")
             )
         serializer.save(renter=self.request.user)
@@ -63,13 +64,13 @@ class BookingCancelView(APIView):
         try:
             booking = Booking.objects.get(pk=pk, renter=request.user)
         except Booking.DoesNotExist:
-            raise serializers.ValidationError(_('Бронирование не найдено'))
+            raise ValidationError(_('Бронирование не найдено'))
 
         if booking.status not in [BookingStatus.PENDING, BookingStatus.CONFIRMED]:
-            raise serializers.ValidationError(_('Бронирование нельзя отменить'))
+            raise ValidationError(_('Бронирование нельзя отменить'))
 
         if booking.start_date <= date.today():
-            raise serializers.ValidationError(_('Срок отмены истёк'))
+            raise ValidationError(_('Срок отмены истёк'))
 
         booking.status = BookingStatus.CANCELLED
         booking.save()
@@ -89,7 +90,7 @@ class BookingStatusView(generics.GenericAPIView):
         action = request.data.get('action')
 
         if booking.status != BookingStatus.PENDING:
-            raise serializers.ValidationError(
+            raise ValidationError(
                 _("Только бронирования в статусе 'Ожидает' можно подтвердить или отклонить.")
             )
 
@@ -100,7 +101,7 @@ class BookingStatusView(generics.GenericAPIView):
             booking.status = BookingStatus.REJECTED
             message = _("Бронирование отклонено.")
         else:
-            raise serializers.ValidationError(_("Укажите действие: 'confirm' или 'reject'."))
+            raise ValidationError(_("Укажите действие: 'confirm' или 'reject'."))
 
         booking.save()
 

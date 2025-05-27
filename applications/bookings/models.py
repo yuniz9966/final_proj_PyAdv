@@ -34,7 +34,6 @@ class Booking(models.Model):
     def clean(self):
         if self.end_date <= self.start_date:
             raise ValidationError(_("Дата окончания должна быть позже даты начала."))
-        # Проверка пересечения дат
         overlapping_bookings = Booking.objects.filter(
             Q(offer=self.offer) &
             Q(status=BookingStatus.CONFIRMED) &
@@ -44,8 +43,20 @@ class Booking(models.Model):
         if overlapping_bookings.exists():
             raise ValidationError(_("Выбранные даты пересекаются с другим подтверждённым бронированием."))
 
+        duplicate_pending = Booking.objects.filter(
+            offer=self.offer,
+            renter=self.renter,
+            start_date=self.start_date,
+            end_date=self.end_date,
+            status=BookingStatus.PENDING
+        ).exclude(id=self.id)
+
+        if duplicate_pending.exists():
+            raise ValidationError(_("Вы уже создали заявку на эти даты. Ожидайте подтверждения."))
+
     def save(self, *args, **kwargs):
-        self.full_clean()
+        if self.status in [BookingStatus.PENDING, BookingStatus.CONFIRMED]:
+            self.full_clean()
         super().save(*args, **kwargs)
 
     class Meta:
