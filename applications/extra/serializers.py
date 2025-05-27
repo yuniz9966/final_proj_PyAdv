@@ -31,7 +31,6 @@ class ReviewSerializer(serializers.ModelSerializer):
         if rating is not None and (rating < 1 or rating > 5):
             raise serializers.ValidationError(_("Рейтинг должен быть от 1 до 5."))
 
-        # Проверка наличия подтверждённого бронирования
         from applications.bookings.models import Booking, BookingStatus
         if not Booking.objects.filter(
             renter=user,

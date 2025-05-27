@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
 from applications.bookings.models import Booking, BookingStatus
 
@@ -19,7 +19,11 @@ class Review(models.Model):
     )
     rating = models.PositiveSmallIntegerField(
         verbose_name=_('Рейтинг'),
-        help_text=_('Оценка от 1 до 5')
+        help_text=_('Оценка от 1 до 5'),
+        validators=[
+            MinValueValidator(1, message=_("Рейтинг должен быть не менее 1.")),
+            MaxValueValidator(5, message=_("Рейтинг должен быть не более 5."))
+        ]
     )
     comment = models.TextField(
         verbose_name=_('Отзыв'),

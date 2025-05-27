@@ -110,6 +110,11 @@ REST_FRAMEWORK = {
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
+AUTHENTICATION_BACKENDS = [
+    'applications.user.backends.EmailBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
         'Bearer': {
