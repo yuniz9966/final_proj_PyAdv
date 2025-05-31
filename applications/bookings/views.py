@@ -52,10 +52,6 @@ class BookingListCreateView(generics.ListCreateAPIView):
             )
         serializer.save(renter=self.request.user)
 
-class BookingDetailView(generics.RetrieveAPIView):  # Убрали Update и Destroy
-    queryset = Booking.objects.all().select_related('offer__location', 'renter', 'offer__owner')
-    serializer_class = BookingSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
 
 class BookingCancelView(APIView):
     permission_classes = [IsRenter]
@@ -89,19 +85,28 @@ class BookingStatusView(generics.GenericAPIView):
         booking = self.get_object()
         action = request.data.get('action')
 
-        if booking.status != BookingStatus.PENDING:
-            raise ValidationError(
-                _("Только бронирования в статусе 'Ожидает' можно подтвердить или отклонить.")
-            )
-
         if action == 'confirm':
+            if booking.status != BookingStatus.PENDING:
+                raise ValidationError(_("Только бронирования в статусе 'Ожидает' можно подтвердить."))
             booking.status = BookingStatus.CONFIRMED
             message = _("Бронирование подтверждено.")
+
         elif action == 'reject':
+            if booking.status != BookingStatus.PENDING:
+                raise ValidationError(_("Только бронирования в статусе 'Ожидает' можно отклонить."))
             booking.status = BookingStatus.REJECTED
             message = _("Бронирование отклонено.")
+
+        elif action == 'cancel':
+            if booking.status != BookingStatus.CONFIRMED:
+                raise ValidationError(_("Отменить можно только подтверждённое бронирование."))
+            if booking.start_date <= date.today():
+                raise ValidationError(_("Нельзя отменить бронирование в день начала или позже."))
+            booking.status = BookingStatus.CANCELLED_BY_OWNER
+            message = _("Бронирование отменено арендодателем.")
+
         else:
-            raise ValidationError(_("Укажите действие: 'confirm' или 'reject'."))
+            raise ValidationError(_("Укажите действие: 'confirm', 'reject' или 'cancel'."))
 
         booking.save()
 
@@ -110,3 +115,4 @@ class BookingStatusView(generics.GenericAPIView):
             'message': message,
             'booking_status': booking.status
         })
+

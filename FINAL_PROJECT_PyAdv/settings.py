@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'debug_toolbar',
 
     # 3-rd party
     'rest_framework',
@@ -65,8 +66,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     # 'applications.user.middleware.JWTAuthenticationMiddleware'
 ]
+
+
+INTERNAL_IPS = ['127.0.0.1']
+
 
 ROOT_URLCONF = 'FINAL_PROJECT_PyAdv.urls'
 
@@ -171,17 +177,24 @@ else:
 
 
 
+# settings.py
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
+        'file': {
+            'class': 'logging.FileHandler',
+            'filename': 'debug.log',  # Логи будут записываться в файл debug.log
         },
+        # 'console': {
+        #     'class': 'logging.StreamHandler',
+        # },
     },
-    'root': {
-        'handlers': ['console'],
-        'level': 'DEBUG',
+    'loggers': {
+        'django.db.backends': {
+            'level': 'DEBUG',
+            'handlers': ['file'],  # Логи идут в файл, а не в консоль
+        },
     },
 }
 

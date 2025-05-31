@@ -9,6 +9,8 @@ class BookingStatus(models.TextChoices):
     CONFIRMED = 'CONFIRMED', _('Подтверждено')
     REJECTED = 'REJECTED', _('Отклонено')
     CANCELLED = 'CANCELLED', _('Отменено')
+    CANCELLED_BY_OWNER = 'cancelled_by_owner', _('Отменено арендодателем')
+
 
 class Booking(models.Model):
     offer = models.ForeignKey(

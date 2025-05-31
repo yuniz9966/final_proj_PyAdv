@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import Group
-
 from applications.user.models import User
 
 
@@ -28,7 +27,7 @@ class UserAdmin(BaseUserAdmin):
 
 
 
-admin.site.unregister(Group)
-admin.site.register(Group)
+# admin.site.unregister(Group)
+# admin.site.register(Group)
 
 

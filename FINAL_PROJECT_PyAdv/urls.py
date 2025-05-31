@@ -23,4 +23,5 @@ urlpatterns = [
     path('api/', include('applications.routers')),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0)),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0)),
+    path('__debug__/', include('debug_toolbar.urls')),
 ]

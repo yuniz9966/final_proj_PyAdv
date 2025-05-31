@@ -13,23 +13,23 @@ def populate_db():
     from applications.extra.fake_data_reviews import ReviewFactory
 
 
-    UserFactory.create_batch(5, role='RENTER')
-    UserFactory.create_batch(5, role='OWNER')
+    UserFactory.create_batch(3, role='RENTER')
+    UserFactory.create_batch(3, role='OWNER')
     print("Created 10 users")
 
-    LocationFactory.create_batch(10)
+    LocationFactory.create_batch(5)
     print("Created 10 locations")
 
-    RentHouseFactory.create_batch(20, owner__role='OWNER')
+    RentHouseFactory.create_batch(10, owner__role='OWNER')
     print("Created 20 offers")
 
-    BookingFactory.create_batch(15, status='CONFIRMED')
+    BookingFactory.create_batch(5, status='CONFIRMED')
     print("Created 15 bookings")
 
-    SearchQueryFactory.create_batch(10)
+    SearchQueryFactory.create_batch(5)
     print("Created 10 search queries")
 
-    ReviewFactory.create_batch(10)
+    ReviewFactory.create_batch(5)
     print("Created 10 reviews")
 
 if __name__ == "__main__":
