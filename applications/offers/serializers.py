@@ -39,7 +39,22 @@ class OfferSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         location_data = validated_data.pop('location')
-        location, _ = Location.objects.get_or_create(**location_data)
+
+        lookup_fields = {
+            'city': location_data['city'].strip(),
+            'district': location_data.get('district', '').strip(),
+            'street': location_data.get('street', '').strip(),
+            'postal_code': location_data.get('postal_code', '').strip(),
+        }
+
+        defaults = {
+            'country': location_data.get('country', 'Germany'),
+            'latitude': location_data.get('latitude'),
+            'longitude': location_data.get('longitude'),
+        }
+
+        location, _ = Location.objects.get_or_create(defaults=defaults, **lookup_fields)
+
         offer = Offer.objects.create(location=location, **validated_data)
         return offer
 

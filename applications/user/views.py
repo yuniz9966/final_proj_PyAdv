@@ -8,7 +8,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from django.contrib.auth import authenticate
-from datetime import datetime
+from datetime import datetime, timezone
 from django.contrib.auth import get_user_model
 
 class LoginView(APIView):
@@ -27,8 +27,8 @@ class LoginView(APIView):
         refresh = RefreshToken.for_user(user)
         access_token = refresh.access_token
 
-        access_expiry = datetime.utcfromtimestamp(access_token['exp'])
-        refresh_expiry = datetime.utcfromtimestamp(refresh['exp'])
+        access_expiry = datetime.fromtimestamp(access_token['exp'], tz=timezone.utc)
+        refresh_expiry = datetime.fromtimestamp(refresh['exp'], tz=timezone.utc)
 
         response = Response({"detail": "Login successful"}, status=status.HTTP_200_OK)
         response.set_cookie(

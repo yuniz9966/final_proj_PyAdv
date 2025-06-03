@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'debug_toolbar',
+    # 'debug_toolbar',
 
     # 3-rd party
     'rest_framework',
@@ -66,7 +66,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     # 'applications.user.middleware.JWTAuthenticationMiddleware'
 ]
 
@@ -95,7 +95,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'FINAL_PROJECT_PyAdv.wsgi.application'
 
 
-# AUTH_USER_MODEL = 'offers.CustomUser'
 # AUTH_USER_MODEL = 'auth.User'
 AUTH_USER_MODEL = 'user.User'
 

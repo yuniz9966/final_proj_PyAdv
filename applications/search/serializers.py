@@ -3,7 +3,7 @@ from applications.search.models import SearchQuery
 from applications.offers.serializers import OfferSerializer
 
 class SearchQuerySerializer(serializers.ModelSerializer):
-    filters = serializers.JSONField()  # Для корректной обработки JSON
+    filters = serializers.JSONField()
 
     class Meta:
         model = SearchQuery

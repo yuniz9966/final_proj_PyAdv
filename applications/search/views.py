@@ -9,7 +9,6 @@ from applications.offers.models import Offer
 from applications.bookings.models import Booking, BookingStatus
 from applications.search.models import SearchQuery
 from applications.search.serializers import SearchResultSerializer
-from django.utils.translation import gettext_lazy as _
 
 class SearchListView(generics.ListAPIView):
     queryset = Offer.objects.filter(is_active=True).select_related('location', 'owner')

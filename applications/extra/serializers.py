@@ -39,7 +39,6 @@ class ReviewSerializer(serializers.ModelSerializer):
         ).exists():
             raise serializers.ValidationError(_("Вы можете оставить отзыв только для забронированного жилья."))
 
-        # Один отзыв на одно жилье
         if Review.objects.filter(offer=offer, author=user).exists():
             raise serializers.ValidationError(_("Вы уже оставили отзыв для этого предложения."))
 

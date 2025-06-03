@@ -21,7 +21,7 @@ class Location(models.Model):
         return ", ".join(parts)
 
     class Meta:
-        unique_together = ['city', 'district', 'street', 'postal_code']  # Уникальность адреса
+        unique_together = ['city', 'district', 'street', 'postal_code']
         indexes = [
             models.Index(fields=['city']),
             models.Index(fields=['district']),

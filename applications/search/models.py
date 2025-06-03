@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils.translation import gettext_lazy as _
 import json
 
 class SearchQuery(models.Model):
@@ -11,15 +10,13 @@ class SearchQuery(models.Model):
         related_name='search_queries'
     )
     query = models.CharField(max_length=255, blank=True)
-    filters = models.TextField(default='{}')  # Храним JSON как строку
+    filters = models.TextField(default='{}')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def get_filters(self):
-        """Десериализация JSON из строки."""
         return json.loads(self.filters)
 
     def set_filters(self, value):
-        """Сериализация словаря в JSON-строку."""
         self.filters = json.dumps(value, ensure_ascii=False)
 
     def __str__(self):
