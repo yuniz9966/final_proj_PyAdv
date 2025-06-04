@@ -19,7 +19,6 @@ class ReviewFactory(factory.django.DjangoModelFactory):
 
     @classmethod
     def _create(cls, model_class, *args, **kwargs):
-        # Если author или offer не переданы, используем существующие
         if 'author' not in kwargs:
             from applications.user.models import User
             renters = User.objects.filter(role='RENTER')

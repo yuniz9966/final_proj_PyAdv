@@ -6,10 +6,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.tokens import RefreshToken, TokenError
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from datetime import datetime, timezone
-from django.contrib.auth import get_user_model
 
 class LoginView(APIView):
     permission_classes = [AllowAny]
@@ -36,7 +35,7 @@ class LoginView(APIView):
             value=str(access_token),
             httponly=True,
             samesite='Lax',
-            secure=False,  # change to True in production with HTTPS
+            secure=False,
             expires=access_expiry
         )
         response.set_cookie(
@@ -74,7 +73,7 @@ class LogoutView(APIView):
                 token = RefreshToken(refresh_token)
                 token.blacklist()
             except Exception:
-                pass  # можно логировать
+                pass
 
         response = Response({"detail": "Successfully logged out"}, status=status.HTTP_205_RESET_CONTENT)
         response.delete_cookie('access_token')

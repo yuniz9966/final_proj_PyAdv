@@ -33,5 +33,4 @@ class Location(models.Model):
         if not self.city.strip():
             raise ValidationError(_("City cannot be empty."))
 
-    # def __str__(self):
-    #     return f"{self.city}, {self.district}, {self.street}"
+
